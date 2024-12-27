@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+<section class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h1 class="display-4 fw-bold">Tech & Open Source Podcast</h1>
+            <p class="lead">Plongez dans l'univers passionnant de la technologie et de l'open source !</p>
+            <p class="fs-5">Chaque semaine, nous explorons les dernières actualités tech et partageons notre passion pour les solutions open source. Rejoignez notre communauté et découvrez :</p>
+            <ul class="list-unstyled">
+                <li><i class="bi bi-check-circle-fill text-success"></i> Les dernières innovations technologiques</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> L'actualité du monde open source</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Des analyses approfondies</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Des interviews d'experts</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <img src="Picture/img-header.jpg" alt="Tech Podcast" class="img-fluid rounded shadow">
+        </div>
+    </div>
+</section>
+<section>
+    <hr class="col-6 mx-auto">
+</section>
+<hr class="my-5">
+
+<section class="container">
+    <h2 class="text-center mb-4">Derniers Épisodes</h2>
+    
+    <div class="row g-4">
+        <!-- Episode 1 -->
+        <div class="col-12">
+            <div class="card">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="images/episode1.jpg" class="img-fluid rounded-start" alt="Episode 1">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Les tendances DevOps en 2024</h5>
+                            <p class="card-text">Découvrez les dernières pratiques et outils DevOps qui transforment le développement logiciel.</p>
+                            <audio controls class="w-100">
+                                <source src="podcasts/episode1.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Episode 2 -->
+        <div class="col-12">
+            <div class="card">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="images/episode2.jpg" class="img-fluid rounded-start" alt="Episode 2">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">L'IA Open Source</h5>
+                            <p class="card-text">Focus sur les projets d'intelligence artificielle open source les plus prometteurs.</p>
+                            <audio controls class="w-100">
+                                <source src="podcasts/episode2.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Episode 3 -->
+        <div class="col-12">
+            <div class="card">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="images/episode3.jpg" class="img-fluid rounded-start" alt="Episode 3">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Sécurité et Open Source</h5>
+                            <p class="card-text">Les meilleures pratiques pour sécuriser vos projets open source.</p>
+                            <audio controls class="w-100">
+                                <source src="podcasts/episode3.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
