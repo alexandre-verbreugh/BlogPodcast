@@ -20,8 +20,8 @@ class Episode
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $datetime = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(length: 255)]
     private ?string $videoUrl = null;
@@ -58,15 +58,14 @@ class Episode
         return $this;
     }
 
-    public function getDatetime(): ?string
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->datetime;
+        return $this->createdAt;
     }
 
-    public function setDatetime(?string $datetime): static
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
-        $this->datetime = $datetime;
-
+        $this->createdAt = $createdAt;
         return $this;
     }
 
