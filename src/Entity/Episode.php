@@ -23,10 +23,10 @@ class Episode
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $videoUrl = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $audio = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $coverImage = null;
 
     public function getId(): ?int
@@ -69,14 +69,14 @@ class Episode
         return $this;
     }
 
-    public function getVideoUrl(): ?string
+    public function getAudio(): ?string
     {
-        return $this->videoUrl;
+        return $this->audio;
     }
 
-    public function setVideoUrl(string $videoUrl): static
+    public function setAudio(?string $audio): static
     {
-        $this->videoUrl = $videoUrl;
+        $this->audio = $audio;
 
         return $this;
     }
@@ -86,7 +86,7 @@ class Episode
         return $this->coverImage;
     }
 
-    public function setCoverImage(string $coverImage): static
+    public function setCoverImage(?string $coverImage): static
     {
         $this->coverImage = $coverImage;
 
