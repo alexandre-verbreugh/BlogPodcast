@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block body %}
 <section class="container py-5">
@@ -30,65 +30,28 @@
     <h2 class="text-center mb-4">Derniers Épisodes</h2>
     
     <div class="row g-4">
-        <!-- Episode 1 -->
-        <div class="col-12">
-            <div class="card">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="Picture/img-header.jpg" class="img-fluid rounded-start" alt="Episode 1">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">Les tendances DevOps en 2024</h5>
-                            <p class="card-text">Découvrez les dernières pratiques et outils DevOps qui transforment le développement logiciel.</p>
+        {% for episode in episodes %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <img src="{{ episode.coverImage }}" class="card-img-top" alt="Cover Image">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ episode.title }}</h3>
+                        <p class="card-text">{{ episode.description }}</p>
+                        <!-- Intégration du lecteur audio -->
+                        <div class="mt-3">
                             <audio controls class="w-100">
-                                <source src="podcasts/episode1.mp3" type="audio/mpeg">
-                            </audio>
+                            <source src="{{ episode.audio }}" type="audio/mpeg">
+                            Votre navigateur ne supporte pas la balise audio.
+                        </audio>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Episode 2 -->
-        <div class="col-12">
-            <div class="card">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="Picture/img-header.jpg" class="img-fluid rounded-start" alt="Episode 2">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">L'IA Open Source</h5>
-                            <p class="card-text">Focus sur les projets d'intelligence artificielle open source les plus prometteurs.</p>
-                            <audio controls class="w-100">
-                                <source src="podcasts/episode2.mp3" type="audio/mpeg">
-                            </audio>
-                        </div>
-                    </div>
-                </div>
+        {% else %}
+            <div class="col-12">
+                <p class="text-center">Aucun épisode trouvé.</p>
             </div>
-        </div>
-
-        <!-- Episode 3 -->
-        <div class="col-12">
-            <div class="card">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="Picture/img-header.jpg" class="img-fluid rounded-start" alt="Episode 3">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">Sécurité et Open Source</h5>
-                            <p class="card-text">Les meilleures pratiques pour sécuriser vos projets open source.</p>
-                            <audio controls class="w-100">
-                                <source src="podcasts/episode3.mp3" type="audio/mpeg">
-                            </audio>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </section>
 

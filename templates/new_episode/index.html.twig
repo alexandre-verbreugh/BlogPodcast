@@ -1,0 +1,26 @@
+{# templates/new_episode/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}New Episode{% endblock %}
+
+{% block body %}
+    <h1>Create new Episode</h1>
+
+    {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+        {{ form_widget(form.title) }}
+        {{ form_widget(form.description) }}
+        {{ form_widget(form.createdAt) }}
+        {{ form_widget(form.audioFile) }}
+        {{ form_widget(form.coverImageFile) }}
+        <button class="btn">Save</button>
+    {{ form_end(form) }}
+
+    {# Display form errors #}
+    {% if form_errors(form) %}
+        <div class="alert alert-danger">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+
+    <a href="{{ path('app_home') }}">Back to list</a>
+{% endblock %}
