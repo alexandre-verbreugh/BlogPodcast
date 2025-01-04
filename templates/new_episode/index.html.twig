@@ -4,23 +4,45 @@
 {% block title %}New Episode{% endblock %}
 
 {% block body %}
-    <h1>Create new Episode</h1>
+    <div class="container mt-5">
+        <h1>Create new Episode</h1>
 
-    {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
-        {{ form_widget(form.title) }}
-        {{ form_widget(form.description) }}
-        {{ form_widget(form.createdAt) }}
-        {{ form_widget(form.audioFile) }}
-        {{ form_widget(form.coverImageFile) }}
-        <button class="btn">Save</button>
-    {{ form_end(form) }}
-
-    {# Display form errors #}
-    {% if form_errors(form) %}
-        <div class="alert alert-danger">
-            {{ form_errors(form) }}
+        {{ form_start(form, {'attr': {'data-turbo': 'false', 'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+        <div class="mb-3">
+            {{ form_label(form.title, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.title, {'attr': {'class': 'invalid-feedback'}}) }}
         </div>
-    {% endif %}
+        <div class="mb-3">
+            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.description, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.createdAt, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.createdAt, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.createdAt, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.audioFile, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.audioFile, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.audioFile, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.coverImageFile, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.coverImageFile, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.coverImageFile, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+        <button class="btn btn-primary">Save</button>
+        {{ form_end(form) }}
 
-    <a href="{{ path('app_home') }}">Back to list</a>
+        {# Display form errors #}
+        {% if form_errors(form) %}
+            <div class="alert alert-danger">
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+
+        <a href="{{ path('app_home') }}" class="btn btn-secondary mt-3">Back to list</a>
+    </div>
 {% endblock %}

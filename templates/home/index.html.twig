@@ -4,9 +4,19 @@
 
 {% block body %}
 <section class="container py-5">
-    <div class="row align-items-center">
-        <div class="col-md-6">
+    <div class="row">
+        <!-- Titre centré sur tous les écrans -->
+        <div class="col-12 text-center">
             <h1 class="display-4 fw-bold">Tech & Open Source Podcast</h1>
+        </div>
+        
+        <!-- Image centrée sur tous les écrans, en dessous du titre sur mobile -->
+        <div class="col-12 text-center mb-4">
+            <img src="Picture/img-header.jpg" alt="Tech Podcast" class="img-fluid rounded shadow">
+        </div>
+        
+        <!-- Contenu texte centré sur mobile, aligné à gauche sur desktop -->
+        <div class="col-12 text-center text-md-start">
             <p class="lead">Plongez dans l'univers passionnant de la technologie et de l'open source !</p>
             <p class="fs-5">Chaque semaine, nous explorons les dernières actualités tech et partageons notre passion pour les solutions open source. Rejoignez notre communauté et découvrez :</p>
             <ul class="list-unstyled">
@@ -16,11 +26,9 @@
                 <li><i class="bi bi-check-circle-fill text-success"></i> Des interviews d'experts</li>
             </ul>
         </div>
-        <div class="col-md-6">
-            <img src="Picture/img-header.jpg" alt="Tech Podcast" class="img-fluid rounded shadow">
-        </div>
     </div>
 </section>
+
 <section>
     <hr class="col-6 mx-auto">
 </section>
@@ -31,18 +39,24 @@
     
     <div class="row g-4">
         {% for episode in episodes %}
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100">
-                    <img src="{{ episode.coverImage }}" class="card-img-top" alt="Cover Image">
+            <!-- Utilisation de col-12 pour mobile et col-lg-6 pour grand écran -->
+            <div class="col-12 col-lg-6 mb-4">
+                <div class="card shadow-sm h-100 text-center text-md-start">
+                    <!-- Image de l'épisode centrée sur mobile, alignée à gauche sur desktop -->
+                    <div class="text-center">
+                        <img src="{{ episode.coverImage }}" class="card-img-top img-fluid" alt="Cover Image" style="max-width: 100%; height: auto;">
+                    </div>
                     <div class="card-body">
-                        <h3 class="card-title">{{ episode.title }}</h3>
-                        <p class="card-text">{{ episode.description }}</p>
-                        <!-- Intégration du lecteur audio -->
-                        <div class="mt-3">
+                        <!-- Titre de l'épisode centré sur mobile, aligné à gauche sur desktop -->
+                        <h3 class="card-title text-center text-md-start">{{ episode.title }}</h3>
+                        <!-- Description de l'épisode centrée sur mobile, alignée à gauche sur desktop -->
+                        <p class="card-text text-center text-md-start">{{ episode.description }}</p>
+                        <!-- Lecteur audio centré sur mobile, aligné à gauche sur desktop -->
+                        <div class="mt-3 text-center text-md-start">
                             <audio controls class="w-100">
-                            <source src="{{ episode.audio }}" type="audio/mpeg">
-                            Votre navigateur ne supporte pas la balise audio.
-                        </audio>
+                                <source src="{{ episode.audio }}" type="audio/mpeg">
+                                Votre navigateur ne supporte pas la balise audio.
+                            </audio>
                         </div>
                     </div>
                 </div>
