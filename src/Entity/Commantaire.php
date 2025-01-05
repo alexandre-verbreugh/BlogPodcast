@@ -26,6 +26,11 @@ class Commantaire
     #[ORM\ManyToOne(inversedBy: 'commantaire')]
     private ?Episode $episode = null;
 
+    public function __construct()
+    {
+        $this->date = new \DateTime(); // Date actuelle par défaut
+    }
+
     public function getId(): ?int
     {
         return $this->id;
