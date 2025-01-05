@@ -1,72 +1,88 @@
+{# templates/home/index.html.twig #}
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Tech & Open Source Podcast{% endblock %}
 
 {% block body %}
 <section class="container py-5">
-    <div class="row">
-        <!-- Titre centré sur tous les écrans -->
-        <div class="col-12 text-center">
-            <h1 class="display-4 fw-bold">Tech & Open Source Podcast</h1>
-        </div>
-        
-        <!-- Image centrée sur tous les écrans, en dessous du titre sur mobile -->
-        <div class="col-12 text-center mb-4">
-            <img src="Picture/img-header.jpg" alt="Tech Podcast" class="img-fluid rounded shadow">
-        </div>
-        
-        <!-- Contenu texte centré sur mobile, aligné à gauche sur desktop -->
-        <div class="col-12 text-center text-md-start">
-            <p class="lead">Plongez dans l'univers passionnant de la technologie et de l'open source !</p>
-            <p class="fs-5">Chaque semaine, nous explorons les dernières actualités tech et partageons notre passion pour les solutions open source. Rejoignez notre communauté et découvrez :</p>
-            <ul class="list-unstyled">
-                <li><i class="bi bi-check-circle-fill text-success"></i> Les dernières innovations technologiques</li>
-                <li><i class="bi bi-check-circle-fill text-success"></i> L'actualité du monde open source</li>
-                <li><i class="bi bi-check-circle-fill text-success"></i> Des analyses approfondies</li>
-                <li><i class="bi bi-check-circle-fill text-success"></i> Des interviews d'experts</li>
-            </ul>
-        </div>
+    <div class="text-center">
+        <h1 class="display-4 fw-bold">Tech & Open Source Podcast</h1>
+        <img src="{{ asset('Picture/img-header.jpg') }}" alt="Tech Podcast" class="img-fluid rounded shadow my-4">
+    </div>
+
+    <div class="text-center text-md-start">
+        <p class="lead">Plongez dans l'univers passionnant de la technologie et de l'open source !</p>
+        <ul class="list-unstyled">
+            <li><i class="bi bi-check-circle-fill text-success"></i> Les dernières innovations technologiques</li>
+            <li><i class="bi bi-check-circle-fill text-success"></i> L'actualité du monde open source</li>
+            <li><i class="bi bi-check-circle-fill text-success"></i> Des analyses approfondies</li>
+        </ul>
     </div>
 </section>
 
-<section>
-    <hr class="col-6 mx-auto">
-</section>
 <hr class="my-5">
 
 <section class="container">
     <h2 class="text-center mb-4">Derniers Épisodes</h2>
-    
     <div class="row g-4">
         {% for episode in episodes %}
-            <!-- Utilisation de col-12 pour mobile et col-lg-6 pour grand écran -->
-            <div class="col-12 col-lg-6 mb-4">
-                <div class="card shadow-sm h-100 text-center text-md-start">
-                    <!-- Image de l'épisode centrée sur mobile, alignée à gauche sur desktop -->
-                    <div class="text-center">
-                        <img src="{{ episode.coverImage }}" class="card-img-top img-fluid" alt="Cover Image" style="max-width: 100%; height: auto;">
-                    </div>
-                    <div class="card-body">
-                        <!-- Titre de l'épisode centré sur mobile, aligné à gauche sur desktop -->
-                        <h3 class="card-title text-center text-md-start">{{ episode.title }}</h3>
-                        <!-- Description de l'épisode centrée sur mobile, alignée à gauche sur desktop -->
-                        <p class="card-text text-center text-md-start">{{ episode.description }}</p>
-                        <!-- Lecteur audio centré sur mobile, aligné à gauche sur desktop -->
-                        <div class="mt-3 text-center text-md-start">
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    {# Image de couverture #}
+                    <a href="{{ path('app_episode_show', {'id': episode.id}) }}" class="text-decoration-none">
+                        <img src="{{ episode.coverImage }}" alt="{{ episode.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    </a>
+
+                    <div class="card-body d-flex flex-column">
+                        {# Titre de l'épisode #}
+                        <h3 class="card-title">{{ episode.title }}</h3>
+
+                        {# Description tronquée avec le filtre "u" #}
+                        <p class="card-text">{{ episode.description|u.truncate(100, '...') }}</p>
+
+                        {# Lecteur audio amélioré #}
+                        <div class="mt-3 mb-4 custom-audio-player">
                             <audio controls class="w-100">
                                 <source src="{{ episode.audio }}" type="audio/mpeg">
                                 Votre navigateur ne supporte pas la balise audio.
                             </audio>
                         </div>
+
+                        {# Bouton pour accéder à l'épisode complet #}
+                        <a href="{{ path('app_episode_show', {'id': episode.id}) }}" class="btn btn-outline-primary mt-auto mb-2">
+                            <i class="bi bi-play-circle"></i> Voir l'épisode complet
+                        </a>
+
+                        {# Bouton pour ouvrir le modal #}
+                        <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#commentModal{{ episode.id }}">
+                            <i class="bi bi-chat-left-text"></i> Ajouter un commentaire
+                        </button>
                     </div>
                 </div>
             </div>
-        {% else %}
-            <div class="col-12">
-                <p class="text-center">Aucun épisode trouvé.</p>
+
+            {# Modal pour le formulaire de commentaire #}
+            <div class="modal fade" id="commentModal{{ episode.id }}" tabindex="-1" aria-labelledby="commentModalLabel{{ episode.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="commentModalLabel{{ episode.id }}">Ajouter un commentaire</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ form_start(commentForms[episode.id], {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                                {{ form_errors(commentForms[episode.id]) }}
+                                {{ form_widget(commentForms[episode.id]) }}
+                                <button type="submit" class="btn btn-primary mt-3">
+                                    <i class="bi bi-send"></i> Envoyer
+                                </button>
+                            {{ form_end(commentForms[episode.id]) }}
+                        </div>
+                    </div>
+                </div>
             </div>
         {% endfor %}
     </div>
 </section>
-
 {% endblock %}
