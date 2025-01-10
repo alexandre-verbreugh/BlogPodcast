@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'utilisateur{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Modifier l'utilisateur</h1>
+        
+        <form method="post">
+            <div class="form-group">
+                <label>Email : {{ user.email }}</label>
+            </div>
+            
+            <div class="form-group">
+                <label for="role">Rôle :</label>
+                <select name="role" id="role" class="form-control">
+                    <option value="ROLE_USER" {% if 'ROLE_ADMIN' not in user.roles %}selected{% endif %}>Utilisateur</option>
+                    <option value="ROLE_ADMIN" {% if 'ROLE_ADMIN' in user.roles %}selected{% endif %}>Administrateur</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Enregistrer</button>
+            <a href="{{ path('app_user_index') }}" class="btn btn-secondary mt-3">Retour</a>
+        </form>
+    </div>
+{% endblock %}
