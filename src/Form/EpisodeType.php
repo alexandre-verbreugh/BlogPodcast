@@ -16,7 +16,12 @@ class EpisodeType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('description', TextareaType::class)
+            ->add('description', TextareaType::class, [
+                'attr' => [
+                    'class' => 'form-control',
+                    'id' => 'episode_description', // Changed ID to episode_description
+                ]
+            ])
             ->add('createdAt', null, [
                 'widget' => 'single_text',
             ])

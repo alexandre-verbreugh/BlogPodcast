@@ -15,7 +15,12 @@
         </div>
         <div class="mb-3">
             {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.description, {
+                'attr': {
+                    'class': 'form-control',
+                    'id': 'episode_description'
+                }
+            }) }}
             {{ form_errors(form.description, {'attr': {'class': 'invalid-feedback'}}) }}
         </div>
         <div class="mb-3">
@@ -45,4 +50,17 @@
 
         <a href="{{ path('app_home') }}" class="btn btn-secondary mt-3">Back to list</a>
     </div>
+
+    <script type="module">
+        console.log('CKEditor initialization script running');
+        console.log('CKEditor loaded:', typeof ClassicEditor !== 'undefined');
+        ClassicEditor
+            .create( document.querySelector( '#episode_description' ), {
+                toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
+                language: 'fr',
+            } )
+            .catch( error => {
+                console.error( error );
+            } );
+    </script>
 {% endblock %}
