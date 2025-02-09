@@ -1,11 +1,10 @@
-{# templates/new_episode/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}New Episode{% endblock %}
+{% block title %}{{ editMode is defined and editMode ? 'Modifier' : 'Créer' }} un Épisode{% endblock %}
 
 {% block body %}
     <div class="container mt-5">
-        <h1>Create new Episode</h1>
+        <h1>{{ editMode is defined and editMode ? 'Modifier' : 'Créer' }} un Épisode</h1>
 
         {{ form_start(form, {'attr': {'data-turbo': 'false', 'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
         <div class="mb-3">
@@ -38,29 +37,33 @@
             {{ form_widget(form.coverImageFile, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.coverImageFile, {'attr': {'class': 'invalid-feedback'}}) }}
         </div>
-        <button class="btn btn-primary">Save</button>
+        <button class="btn btn-primary">{{ editMode is defined and editMode ? 'Mettre à jour' : 'Enregistrer' }}</button>
         {{ form_end(form) }}
 
-        {# Display form errors #}
         {% if form_errors(form) %}
             <div class="alert alert-danger">
                 {{ form_errors(form) }}
             </div>
         {% endif %}
 
-        <a href="{{ path('app_home') }}" class="btn btn-secondary mt-3">Back to list</a>
+        <a href="{{ path('app_home') }}" class="btn btn-secondary mt-3">Retour</a>
     </div>
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 
     <script type="module">
         console.log('CKEditor initialization script running');
         console.log('CKEditor loaded:', typeof ClassicEditor !== 'undefined');
-        ClassicEditor
-            .create( document.querySelector( '#episode_description' ), {
-                toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
-                language: 'fr',
-            } )
-            .catch( error => {
-                console.error( error );
-            } );
+        
+        {% if editMode is defined and editMode or editMode is not defined %}
+            ClassicEditor
+                .create( document.querySelector( '#episode_description' ), {
+                    toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
+                    language: 'fr',
+                } )
+                .catch( error => {
+                    console.error( error );
+                } );
+        {% endif %}
     </script>
 {% endblock %}
