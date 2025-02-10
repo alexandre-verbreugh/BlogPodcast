@@ -105,16 +105,21 @@ class NewEpisodeController extends AbstractController
 
             // Gestion du fichier audio
             if ($audioFile) {
+                // Supprime l'ancien fichier si existant
+                if ($episode->getAudio() && file_exists($this->getParameter('kernel.project_dir').'/public'.$episode->getAudio())) {
+                    unlink($this->getParameter('kernel.project_dir').'/public'.$episode->getAudio());
+                }
+            
                 try {
                     $originalFilename = pathinfo($audioFile->getClientOriginalName(), PATHINFO_FILENAME);
                     $safeFilename = $slugger->slug($originalFilename);
                     $newFilename = $safeFilename.'-'.uniqid().'.'.$audioFile->guessExtension();
-                    
+            
                     $targetDirectory = $this->getParameter('kernel.project_dir').'/public/episodes';
                     if (!file_exists($targetDirectory)) {
                         mkdir($targetDirectory, 0777, true);
                     }
-
+            
                     $audioFile->move($targetDirectory, $newFilename);
                     $episode->setAudio('/episodes/'.$newFilename);
                 } catch (FileException $e) {
@@ -124,22 +129,28 @@ class NewEpisodeController extends AbstractController
 
             // Gestion de l'image de couverture
             if ($coverImageFile) {
+                // Supprime l'ancienne image si existante
+                if ($episode->getCoverImage() && file_exists($this->getParameter('kernel.project_dir').'/public'.$episode->getCoverImage())) {
+                    unlink($this->getParameter('kernel.project_dir').'/public'.$episode->getCoverImage());
+                }
+            
                 try {
                     $originalFilename = pathinfo($coverImageFile->getClientOriginalName(), PATHINFO_FILENAME);
                     $safeFilename = $slugger->slug($originalFilename);
                     $newFilename = $safeFilename.'-'.uniqid().'.'.$coverImageFile->guessExtension();
-                    
+            
                     $targetDirectory = $this->getParameter('kernel.project_dir').'/public/covers';
                     if (!file_exists($targetDirectory)) {
                         mkdir($targetDirectory, 0777, true);
                     }
-
+            
                     $coverImageFile->move($targetDirectory, $newFilename);
                     $episode->setCoverImage('/covers/'.$newFilename);
                 } catch (FileException $e) {
                     $this->addFlash('error', 'Erreur lors du téléchargement de l\'image de couverture');
                 }
             }
+            
 
             $entityManager->flush();
             $this->addFlash('success', 'Épisode mis à jour avec succès !');

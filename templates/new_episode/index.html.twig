@@ -7,36 +7,58 @@
         <h1>{{ editMode is defined and editMode ? 'Modifier' : 'Créer' }} un Épisode</h1>
 
         {{ form_start(form, {'attr': {'data-turbo': 'false', 'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+        
         <div class="mb-3">
             {{ form_label(form.title, null, {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.title, {'attr': {'class': 'invalid-feedback'}}) }}
         </div>
+        
         <div class="mb-3">
             {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.description, {
-                'attr': {
-                    'class': 'form-control',
-                    'id': 'episode_description'
-                }
-            }) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'id': 'episode_description'}}) }}
             {{ form_errors(form.description, {'attr': {'class': 'invalid-feedback'}}) }}
         </div>
+        
         <div class="mb-3">
             {{ form_label(form.createdAt, null, {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.createdAt, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.createdAt, {'attr': {'class': 'invalid-feedback'}}) }}
         </div>
+
+        {# 🔹 Affichage du fichier audio actuel #}
+        {% if editMode is defined and editMode and episode.audio %}
+            <div class="mb-3">
+                <label class="form-label">Fichier audio actuel :</label>
+                <p><a href="{{ episode.audio }}" target="_blank">{{ episode.audio }}</a></p>
+                <audio controls class="w-100">
+                    <source src="{{ episode.audio }}" type="audio/mpeg">
+                    Votre navigateur ne supporte pas l'audio.
+                </audio>
+            </div>
+        {% endif %}
+
         <div class="mb-3">
             {{ form_label(form.audioFile, null, {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.audioFile, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.audioFile, {'attr': {'class': 'invalid-feedback'}}) }}
         </div>
+
+        {# 🔹 Affichage de l’image actuelle #}
+        {% if editMode is defined and editMode and episode.coverImage %}
+            <div class="mb-3">
+                <label class="form-label">Image actuelle :</label>
+                <p><a href="{{ episode.coverImage }}" target="_blank">{{ episode.coverImage }}</a></p>
+                <img src="{{ episode.coverImage }}" alt="Image de couverture" class="img-fluid" style="max-width: 200px;">
+            </div>
+        {% endif %}
+
         <div class="mb-3">
             {{ form_label(form.coverImageFile, null, {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.coverImageFile, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.coverImageFile, {'attr': {'class': 'invalid-feedback'}}) }}
         </div>
+
         <button class="btn btn-primary">{{ editMode is defined and editMode ? 'Mettre à jour' : 'Enregistrer' }}</button>
         {{ form_end(form) }}
 
@@ -45,8 +67,9 @@
                 {{ form_errors(form) }}
             </div>
         {% endif %}
-
-        <a href="{{ path('app_home') }}" class="btn btn-secondary mt-3">Retour</a>
+        <div class="text-center">
+            <a href="{{ path('app_home') }}" class="btn btn-secondary mt-3">Retour</a>
+        </div>
     </div>
 
     <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
@@ -57,13 +80,13 @@
         
         {% if editMode is defined and editMode or editMode is not defined %}
             ClassicEditor
-                .create( document.querySelector( '#episode_description' ), {
+                .create(document.querySelector('#episode_description'), {
                     toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
                     language: 'fr',
-                } )
-                .catch( error => {
-                    console.error( error );
-                } );
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         {% endif %}
     </script>
 {% endblock %}

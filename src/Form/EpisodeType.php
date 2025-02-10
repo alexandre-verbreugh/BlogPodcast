@@ -28,7 +28,7 @@ class EpisodeType extends AbstractType
             ->add('audioFile', FileType::class, [
                 'label' => 'Fichier audio',
                 'mapped' => false,
-                'required' => true,
+                'required' => false,
                 'constraints' => [
                     new File([
                         'maxSize' => '250M',
@@ -43,7 +43,7 @@ class EpisodeType extends AbstractType
             ->add('coverImageFile', FileType::class, [
                 'label' => 'Image de couverture',
                 'mapped' => false,
-                'required' => true,
+                'required' => false,
                 'constraints' => [
                     new File([
                         'maxSize' => '1024k',
