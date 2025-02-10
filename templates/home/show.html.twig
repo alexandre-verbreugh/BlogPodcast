@@ -12,15 +12,25 @@
                 <div class="card shadow-sm">
                     <img src="{{ episode.coverImage }}" alt="{{ episode.title }}" class="card-img-top" style="max-height: 400px; object-fit: cover;">
                     <div class="card-body">
-                        <h1 class="card-title h2">{{ episode.title }}</h1>
+                        <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="card-title h2">
+                            {{ episode.title }}
+                        </h1>
+                        <button id="likeButton" class="btn border-0 bg-transparent">
+                            ❤️ <span id="likeCount">{{ episode.likeCount }}</span>
+                        </button>
+                    </div>
+
                         <p class="text-muted">Publié le {{ episode.createdAt|date('d/m/Y') }}</p>
                         
                         <div class="my-4">
-                            <audio controls class="w-100">
+                            <audio controls class="w-100" id="audioPlayer">
                                 <source src="{{ episode.audio }}" type="audio/mpeg">
                                 Votre navigateur ne supporte pas la lecture audio.
                             </audio>
+                            <p>Nombre de lectures : <span id="viewCount">{{ episode.viewCount }}</span></p>
                         </div>
+
 
                         <div class="my-4">
                             <h2 class="h4">Description</h2>
@@ -81,4 +91,41 @@
     <div class="text-center">
         <a href="{{ path('app_home') }}" class="btn btn-primary mt-3">Retour à l'accueil</a>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let audioPlayer = document.getElementById("audioPlayer");
+            let viewed = false; // Empêche d'incrémenter plusieurs fois
+
+            // Incrémentation du compteur de vues quand on appuie sur "Play"
+            audioPlayer.addEventListener("play", function() {
+                if (!viewed) {
+                    fetch("{{ path('app_episode_view', {id: episode.id}) }}", {
+                        method: "POST",
+                        headers: { "X-Requested-With": "XMLHttpRequest" }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("viewCount").textContent = data.views;
+                    });
+
+                    viewed = true;
+                }
+            });
+
+            // Incrémentation du compteur de "J'aime"
+            let likeButton = document.getElementById("likeButton");
+
+            likeButton.addEventListener("click", function() {
+                fetch("{{ path('app_episode_like', {id: episode.id}) }}", {
+                    method: "POST",
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("likeCount").textContent = data.likes;
+                });
+            });
+        });
+    </script>
+
 {% endblock %}

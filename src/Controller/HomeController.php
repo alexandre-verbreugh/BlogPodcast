@@ -8,6 +8,7 @@ use App\Form\CommantaireType;
 use App\Repository\EpisodeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,6 +19,7 @@ class HomeController extends AbstractController
     public function index(EpisodeRepository $episodeRepository): Response
     {
         $episodes = $episodeRepository->findBy([], ['createdAt' => 'DESC']);
+
         // Préparer un formulaire pour chaque épisode
         $commentForms = [];
         foreach ($episodes as $episode) {
@@ -26,6 +28,7 @@ class HomeController extends AbstractController
             ]);
             $commentForms[$episode->getId()] = $commentForm->createView();
         }
+
         return $this->render('home/index.html.twig', [
             'episodes' => $episodes,
             'commentForms' => $commentForms,
@@ -38,7 +41,7 @@ class HomeController extends AbstractController
         Episode $episode, 
         EntityManagerInterface $entityManager, 
         EpisodeRepository $episodeRepository
-        ): Response {
+    ): Response {
         $commantaire = new Commantaire();
         $commantaire->setEpisode($episode);
 
@@ -52,18 +55,18 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
-        // Si le formulaire n'est pas valide, prépare les données pour afficher la page d'accueil
+        // Préparation des données pour afficher la page d'accueil
         $episodes = $episodeRepository->findAll();
         $commentForms = [];
         foreach ($episodes as $ep) {
             $commentForms[$ep->getId()] = $this->createForm(CommantaireType::class)->createView();
         }
-        $commentForms[$episode->getId()] = $form->createView(); // Inclure le formulaire soumis avec ses erreurs
+        $commentForms[$episode->getId()] = $form->createView();
 
         return $this->render('home/index.html.twig', [
             'episodes' => $episodes,
             'commentForms' => $commentForms,
-            'errors' => $form->getErrors(true, false), // Optionnel : pour déboguer
+            'errors' => $form->getErrors(true, false),
         ]);
     }
 
@@ -80,5 +83,21 @@ class HomeController extends AbstractController
         ]);
     }
 
+    #[Route('/episode/{id}/view', name: 'app_episode_view', methods: ['POST'])]
+    public function incrementView(Episode $episode, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $episode->incrementViewCount();
+        $entityManager->flush();
 
+        return new JsonResponse(['views' => $episode->getViewCount()]);
+    }
+
+    #[Route('/episode/{id}/like', name: 'app_episode_like', methods: ['POST'])]
+    public function incrementLike(Episode $episode, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $episode->incrementLikeCount();
+        $entityManager->flush();
+
+        return new JsonResponse(['likes' => $episode->getLikeCount()]);
+    }
 }

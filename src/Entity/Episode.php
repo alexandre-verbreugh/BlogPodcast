@@ -31,6 +31,12 @@ class Episode
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $coverImage = null;
 
+    #[ORM\Column(type: 'integer')]
+    private int $viewCount = 0;
+
+    #[ORM\Column(type: 'integer')]
+    private int $likeCount = 0;
+
     /**
      * @var Collection<int, Commantaire>
      */
@@ -134,5 +140,25 @@ class Episode
         }
 
         return $this;
+    }
+
+    public function getViewCount(): int
+    {
+        return $this->viewCount;
+    }
+
+    public function incrementViewCount(): void
+    {
+        $this->viewCount++;
+    }
+
+    public function getLikeCount(): int
+    {
+        return $this->likeCount;
+    }
+
+    public function incrementLikeCount(): void
+    {
+        $this->likeCount++;
     }
 }
