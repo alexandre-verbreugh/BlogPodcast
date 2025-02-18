@@ -1,0 +1,32 @@
+{% block success_stream %}
+<turbo-stream action="replace" target="comment-form-{{ episode.id }}">
+    <template>
+        {{ form_start(form, {
+            attr: {
+                'data-turbo-frame': 'comment-form-' ~ episode.id,
+                'class': 'comment-form'
+            }
+        }) }}
+            <div class="mb-3">
+                {{ form_row(form.pseudo) }}
+            </div>
+            <div class="mb-3">
+                {{ form_row(form.message) }}
+            </div>
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        {{ form_end(form) }}
+    </template>
+</turbo-stream>
+
+<turbo-stream action="append" target="comments-list-{{ episode.id }}">
+    <template>
+        <div class="comment-item mb-3 p-3 border rounded">
+            <div class="d-flex justify-content-between">
+                <strong>{{ comment.pseudo }}</strong>
+                <small class="text-muted">{{ comment.date|date('d/m/Y H:i') }}</small>
+            </div>
+            <p class="mt-2 mb-0">{{ comment.message }}</p>
+        </div>
+    </template>
+</turbo-stream>
+{% endblock %}
