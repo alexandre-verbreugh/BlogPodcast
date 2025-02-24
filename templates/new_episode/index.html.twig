@@ -72,7 +72,11 @@
         </div>
     </div>
 
-    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    
+    {% block ckeditor_script %}
+        <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    {% endblock %}
+
 
     <script type="module">
         console.log('CKEditor initialization script running');

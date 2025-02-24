@@ -78,6 +78,11 @@
         </div>
     </div>
     <div class="text-center">
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('app_edit', {'id': episode.id}) }}" class="btn btn-warning mt-3 me-2">
+                <i class="bi bi-pencil"></i> Modifier l'épisode
+            </a>
+        {% endif %}
         <a href="{{ path('app_home') }}" class="btn btn-primary mt-3">Retour à l'accueil</a>
     </div>
 

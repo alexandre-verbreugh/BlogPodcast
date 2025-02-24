@@ -8,7 +8,6 @@
         <meta name="author" content="Alexandre Verbreugh">
         <meta name="robots" content="index, follow">
         
-
         <!-- Open Graph pour Facebook et LinkedIn -->
         <meta property="og:title" content="Tech Libre - Podcast sur la Tech & Open Source">
         <meta property="og:description" content="Tech Libre est un podcast dédié aux actualités tech et open source. Suivez nos épisodes et analyses sur les logiciels libres et la cybersécurité.">
@@ -45,7 +44,7 @@
         </main>
 
         {% include "partials/footer.html.twig" %}
-        
-
+        {% block ckeditor_script %}
+        {% endblock %}
     </body>
 </html>

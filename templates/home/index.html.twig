@@ -72,9 +72,6 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="commentModal{{ episode.id }}" tabindex="-1" aria-labelledby="commentModalLabel{{ episode.id }}" aria-hidden="true">
-
-        </div>
         <div class="text-center">
             {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('app_new') }}" class="btn btn-success">
