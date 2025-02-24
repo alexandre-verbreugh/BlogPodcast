@@ -34,6 +34,7 @@ class EpisodeType extends AbstractType
                         'maxSize' => '250M',
                         'mimeTypes' => [
                             'audio/mpeg',
+                            'audio/mp3',
                             'audio/x-wav',
                         ],
                         'mimeTypesMessage' => 'Veuillez télécharger un fichier audio valide',

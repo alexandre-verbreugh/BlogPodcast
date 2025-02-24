@@ -153,6 +153,7 @@ class NewEpisodeController extends AbstractController
             
 
             $entityManager->flush();
+            
             $this->addFlash('success', 'Épisode mis à jour avec succès !');
 
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
