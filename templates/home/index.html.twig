@@ -72,6 +72,7 @@
                 </div>
             </div>
         </div>
+        {% endfor %}
         <div class="text-center">
             {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('app_new') }}" class="btn btn-success">
@@ -79,7 +80,6 @@
                 </a>
             {% endif %}
         </div>
-        {% endfor %}
     </div>
 </section>
 {% endblock %}
