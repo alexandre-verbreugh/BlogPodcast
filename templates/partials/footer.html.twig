@@ -29,8 +29,11 @@
                 </div>
             </div>
             <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
-                <a href="{{ path('app_login') }}" class="btn btn-primary mb-2">Connexion</a>
-                <p class="mb-0">&copy; 2024 Tech & Open Source Podcast. Tous droits réservés.</p>
+                {% if app.user %}
+                    <a href="{{ path('app_logout') }}" class="btn btn-primary mb-2">Déconnexion</a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="btn btn-primary mb-2">Connexion</a>
+                {% endif %}                <p class="mb-0">&copy; 2024 Tech & Open Source Podcast. Tous droits réservés.</p>
                 <p class="mb-0">Développé par
                     <a href="https://depannageinformatique18.fr" class="text-white" target="_blank" rel="noopener noreferrer">
                         Programmation informatique
