@@ -47,6 +47,134 @@
 
             // Initialiser les interactions
             setupEpisodeInteractions();
+            
+            // Initialisation des boutons de suppression de commentaires
+            initDeleteCommentButtons();
+            
+            // Initialiser les tooltips Bootstrap si Bootstrap est disponible
+            if (typeof bootstrap !== 'undefined') {
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            } else {
+                console.warn("Bootstrap n'est pas chargé, les tooltips ne seront pas initialisés");
+            }
+        });
+        
+        // Fonction de suppression avec vérification de l'existence de Bootstrap
+        function initDeleteCommentButtons() {
+            document.querySelectorAll('.delete-comment-btn').forEach(button => {
+                // Supprimer d'abord les gestionnaires existants pour éviter les duplications
+                button.removeEventListener('click', handleDeleteComment);
+                button.addEventListener('click', handleDeleteComment);
+            });
+        }
+        
+        function handleDeleteComment() {
+            if (confirm('Es-tu sûr de vouloir supprimer ce commentaire ?')) {
+                const commentId = this.getAttribute('data-comment-id');
+                
+                // Utilisation de l'API Fetch pour envoyer une requête DELETE
+                fetch(`/comment/delete/${commentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Si la suppression a réussi, supprimer l'élément du DOM
+                        const commentElement = document.getElementById(`comment-${commentId}`);
+                        if (commentElement) {
+                            commentElement.remove();
+                            
+                            // Afficher un message si tous les commentaires sont supprimés
+                            const commentsList = document.querySelector('.comments-list');
+                            if (commentsList && commentsList.querySelectorAll('.comment-item').length === 0) {
+                                commentsList.innerHTML = '<p class="text-muted">Aucun commentaire pour cet épisode.</p>';
+                            }
+                        }
+                        
+                        // Afficher un toast ou une notification avec vérification de Bootstrap
+                        safeShowNotification('Commentaire supprimé avec succès', 'success');
+                    } else {
+                        safeShowNotification('Erreur lors de la suppression du commentaire', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    safeShowNotification('Erreur lors de la suppression du commentaire', 'danger');
+                });
+            }
+        }
+
+        // Fonction pour afficher des notifications de manière sécurisée
+        function safeShowNotification(message, type = 'info') {
+            // Vérifier si Bootstrap est chargé
+            if (typeof bootstrap === 'undefined') {
+                console.warn("Bootstrap n'est pas chargé, utilisation d'une alerte standard");
+                alert(message);
+                return;
+            }
+            
+            // Créer un élément toast
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            
+            // Ajouter le toast au container
+            let toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+            
+            toastContainer.appendChild(toast);
+            
+            try {
+                // Initialiser le toast Bootstrap
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+                
+                // Supprimer le toast après qu'il soit caché
+                toast.addEventListener('hidden.bs.toast', function () {
+                    toast.remove();
+                });
+            } catch (e) {
+                console.error("Erreur lors de l'initialisation du toast:", e);
+                alert(message);
+                toast.remove();
+            }
+        }
+        
+        // Pour les chargements sans Turbo
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Turbo === 'undefined') {
+                console.log('DOMContentLoaded - Initialisation sans Turbo');
+                setupEpisodeInteractions();
+                initDeleteCommentButtons();
+                
+                if (typeof bootstrap !== 'undefined') {
+                    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                }
+            }
         });
     </script>
 {% endblock %}
@@ -90,10 +218,22 @@
                             <div id="comments-list-{{ episode.id }}" class="comments-list mb-4">
                                 {% if episode.commantaire|length > 0 %}
                                     {% for comment in episode.commantaire %}
-                                        <div class="comment-item mb-3 p-3 border rounded">
+                                        <div id="comment-{{ comment.id }}" class="comment-item mb-3 p-3 border rounded">
                                             <div class="d-flex justify-content-between">
                                                 <strong>{{ comment.pseudo }}</strong>
-                                                <small class="text-muted">{{ comment.date|date('d/m/Y H:i') }}</small>
+                                                <div>
+                                                    <small class="text-muted">{{ comment.date|date('d/m/Y H:i') }}</small>
+                                                    {% if is_granted('ROLE_ADMIN') %}
+                                                        <button type="button" 
+                                                                class="btn btn-sm btn-danger ms-2 delete-comment-btn"
+                                                                data-comment-id="{{ comment.id }}"
+                                                                data-episode-id="{{ episode.id }}"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Supprimer ce commentaire">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                             <p class="mt-2 mb-0">{{ comment.message }}</p>
                                         </div>
@@ -134,4 +274,7 @@
         {% endif %}
         <a href="{{ path('app_home') }}" class="btn btn-primary mt-3">Retour à l'accueil</a>
     </div>
+    
+    {# Container pour les toasts #}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 {% endblock %}

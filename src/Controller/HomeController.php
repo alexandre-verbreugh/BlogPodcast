@@ -111,4 +111,35 @@ class HomeController extends AbstractController
 
         return new JsonResponse(['likes' => $episode->getLikeCount()]);
     }
+
+    #[Route('/comment/delete/{id}', name: 'app_comment_delete', methods: ['DELETE'])]
+    public function deleteComment(
+        Request $request, 
+        Commantaire $comment, 
+        EntityManagerInterface $entityManager
+    ): Response {
+        // Vérifier si l'utilisateur est un administrateur
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return new JsonResponse(['error' => 'Accès refusé'], Response::HTTP_FORBIDDEN);
+        }
+
+        try {
+            // Récupérer l'ID de l'épisode avant de supprimer le commentaire
+            $episodeId = $comment->getEpisode()->getId();
+            
+            $entityManager->remove($comment);
+            $entityManager->flush();
+
+            if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
+                $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+                
+                // Retourner une réponse vide pour que Turbo supprime l'élément
+                return new Response('', Response::HTTP_OK);
+            }
+
+            return new JsonResponse(['success' => true], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Erreur lors de la suppression du commentaire'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
