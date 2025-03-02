@@ -2,6 +2,55 @@
 
 {% block title %}{{ episode.title }}{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener("turbo:load", function() {
+            // Gestion des vues et likes de l'épisode
+            const setupEpisodeInteractions = function() {
+                console.log("Initializing episode interactions");
+                let audioPlayer = document.getElementById("audioPlayer");
+                let viewed = false;
+
+                if (audioPlayer) {
+                    audioPlayer.addEventListener("play", function() {
+                        if (!viewed) {
+                            fetch("{{ path('app_episode_view', {id: episode.id}) }}", {
+                                method: "POST",
+                                headers: { "X-Requested-With": "XMLHttpRequest" }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                document.getElementById("viewCount").textContent = data.views;
+                            })
+                            .catch(error => console.error("Error incrementing view count:", error));
+                            viewed = true;
+                        }
+                    });
+                }
+
+                let likeButton = document.getElementById("likeButton");
+                if (likeButton) {
+                    likeButton.addEventListener("click", function() {
+                        fetch("{{ path('app_episode_like', {id: episode.id}) }}", {
+                            method: "POST",
+                            headers: { "X-Requested-With": "XMLHttpRequest" }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById("likeCount").textContent = data.likes;
+                        })
+                        .catch(error => console.error("Error incrementing like count:", error));
+                    });
+                }
+            };
+
+            // Initialiser les interactions
+            setupEpisodeInteractions();
+        });
+    </script>
+{% endblock %}
+
 {% block body %}
     <div class="container py-5">
         <div class="row">
@@ -66,7 +115,7 @@
                                         {{ form_row(commentForm.pseudo) }}
                                     </div>
                                     <div class="mb-3">
-                                        {{ form_row(commentForm.message) }}
+                                        {{ form_row(commentForm.message, {'attr': {'class': 'form-control ckeditor'}}) }}
                                     </div>
                                     <button type="submit" class="btn btn-primary">Envoyer</button>
                                 {{ form_end(commentForm) }}
@@ -85,38 +134,4 @@
         {% endif %}
         <a href="{{ path('app_home') }}" class="btn btn-primary mt-3">Retour à l'accueil</a>
     </div>
-
-    <script>
-        document.addEventListener("turbo:load", function() {
-            let audioPlayer = document.getElementById("audioPlayer");
-            let viewed = false;
-
-            audioPlayer.addEventListener("play", function() {
-                if (!viewed) {
-                    fetch("{{ path('app_episode_view', {id: episode.id}) }}", {
-                        method: "POST",
-                        headers: { "X-Requested-With": "XMLHttpRequest" }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById("viewCount").textContent = data.views;
-                    });
-                    viewed = true;
-                }
-            });
-
-            let likeButton = document.getElementById("likeButton");
-            likeButton.addEventListener("click", function() {
-                fetch("{{ path('app_episode_like', {id: episode.id}) }}", {
-                    method: "POST",
-                    headers: { "X-Requested-With": "XMLHttpRequest" }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("likeCount").textContent = data.likes;
-                });
-            });
-        });
-
-    </script>
 {% endblock %}
