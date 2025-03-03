@@ -31,15 +31,43 @@
         
         <!-- CKEditor -->
         <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
-
+         
         {% block stylesheets %}{% endblock %}
 
         <!-- Bootstrap JavaScript Bundle avec Popper (nécessaire pour les composants comme Toast) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
+
+        <link rel="stylesheet" href="/css/botman.css">
         {% block javascripts %}
             {{ importmap('app') }}
+            <script src="https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js"></script>
             <script>
+                // Configuration BotMan
+                var botmanWidget = {
+                frameEndpoint: '/botman',
+                chatServer: '/botman/chat', 
+                introMessage: 'Salut ! 👋 Je suis le chatbot de Tech Libre. Comment puis-je t\'aider ?',
+                title: 'Tech Libre Assistant',
+                placeholderText: 'Envoie-moi un message...',
+                mainColor: '#00cba9',
+                bubbleBackground: '#00cba9',
+                headerTextColor: '#fff',
+                // Taille maximale pour le widget
+                desktopHeight: 500,
+                desktopWidth: 400,
+                mobileHeight: '80vh',
+                mobileWidth: '90vw',
+                // Options supplémentaires
+                displayMessageTime: false,
+                // Important pour éviter les problèmes d'héritage de style
+                frameContainer: 'body', 
+                // Amélioration UX
+                autoOpen: false,
+                hideWhenNotConnected: false,
+                useLocalStorage: true
+            };
+                
                 // Stockage global des instances CKEditor
                 window.editorInstances = {};
                 

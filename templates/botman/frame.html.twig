@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Bot</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            background: #f8f9fa;
+            box-sizing: border-box;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #f8f9fa;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .message {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 20px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .bot-message {
+            background-color: #00cba9;
+            color: white;
+            margin-right: auto;
+        }
+        
+        .user-message {
+            background-color: #e9ecef;
+            color: #212529;
+            margin-left: auto;
+        }
+        
+        .chat-input {
+            width: 100%;
+            display: flex;
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+        
+        .chat-input input {
+            flex-grow: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin-right: 10px;
+            outline: none;
+        }
+        
+        .chat-input button {
+            border: none;
+            background-color: #00cba9;
+            color: white;
+            border-radius: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        
+        .chat-input button:hover {
+            background-color: #00b89d;
+            transform: scale(1.05);
+        }
+        
+        /* Style amélioré pour l'indicateur de frappe */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            margin-right: auto;
+            background-color: #00cba9;
+            padding: 12px 18px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            float: left;
+            margin: 0 1px;
+            background-color: white;
+            display: block;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+        
+        .typing-indicator span:nth-of-type(1) {
+            animation: 1s blink infinite 0.3333s;
+        }
+        
+        .typing-indicator span:nth-of-type(2) {
+            animation: 1s blink infinite 0.6666s;
+        }
+        
+        .typing-indicator span:nth-of-type(3) {
+            animation: 1s blink infinite 0.9999s;
+        }
+        
+        @keyframes blink {
+            50% {
+                opacity: 1;
+            }
+        }
+        
+        /* Suppression explicite des styles potentiellement hérités */
+        #footer, footer, .footer {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">Salut ! Je suis l'assistant Tech Libre. Comment puis-je t'aider ?</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Écris ton message...">
+            <button id="send-button">Envoyer</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            let isWaitingForResponse = false;
+
+            function addMessage(message, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+                messageDiv.textContent = message;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return messageDiv;
+            }
+
+            function showTypingIndicator() {
+                // Crée un indicateur de frappe animé au lieu d'un simple "..."
+                const indicator = document.createElement('div');
+                indicator.classList.add('typing-indicator');
+                indicator.id = 'typing-indicator';
+                
+                // Ajoute les trois points qui vont s'animer
+                for (let i = 0; i < 3; i++) {
+                    const dot = document.createElement('span');
+                    indicator.appendChild(dot);
+                }
+                
+                chatMessages.appendChild(indicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Affiche un message console pour debug
+                console.log('Indicateur de frappe affiché');
+                
+                return indicator;
+            }
+
+            function removeTypingIndicator() {
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) {
+                    indicator.remove();
+                    console.log('Indicateur de frappe supprimé');
+                }
+            }
+
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (message && !isWaitingForResponse) {
+                    // Désactive l'entrée pendant le traitement
+                    isWaitingForResponse = true;
+                    messageInput.disabled = true;
+                    sendButton.disabled = true;
+                    
+                    // Affiche le message de l'utilisateur
+                    addMessage(message, true);
+                    messageInput.value = '';
+                    
+                    // Affiche l'indicateur de frappe et s'assure qu'il est visible
+                    const typingIndicator = showTypingIndicator();
+                    
+                    // Petit délai avant d'envoyer pour s'assurer que l'indicateur est affiché
+                    setTimeout(() => {
+                        // Envoie le message au bot
+                        fetch('/botman/chat', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                message: message
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Ajoute un délai minimum pour que l'indicateur reste visible au moins 1 seconde
+                            setTimeout(() => {
+                                // Supprime l'indicateur de frappe
+                                removeTypingIndicator();
+                                
+                                // Affiche la réponse du bot
+                                if (data.message) {
+                                    addMessage(data.message, false);
+                                }
+                                
+                                // Réactive l'entrée
+                                messageInput.disabled = false;
+                                sendButton.disabled = false;
+                                isWaitingForResponse = false;
+                                messageInput.focus();
+                            }, 600); // Délai minimum de 600ms
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            removeTypingIndicator();
+                            addMessage('Désolé, une erreur est survenue. Essaie à nouveau.', false);
+                            
+                            // Réactive l'entrée
+                            messageInput.disabled = false;
+                            sendButton.disabled = false;
+                            isWaitingForResponse = false;
+                            messageInput.focus();
+                        });
+                    }, 100);
+                }
+            }
+
+            sendButton.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !isWaitingForResponse) {
+                    sendMessage();
+                }
+            });
+            
+            // Focus sur l'input au chargement
+            messageInput.focus();
+        });
+    </script>
+</body>
+</html>
