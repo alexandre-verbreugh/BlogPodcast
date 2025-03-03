@@ -32,156 +32,16 @@
         <!-- CKEditor -->
         <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
          
+        <!-- Style BotMan -->
+        <link rel="stylesheet" href="/css/botman.css">
+        
         {% block stylesheets %}{% endblock %}
 
-        <!-- Bootstrap JavaScript Bundle avec Popper (nécessaire pour les composants comme Toast) -->
+        <!-- Bootstrap JavaScript Bundle avec Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-
-        <link rel="stylesheet" href="/css/botman.css">
         {% block javascripts %}
             {{ importmap('app') }}
-            <script src="https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js"></script>
-            <script>
-                // Configuration BotMan
-                var botmanWidget = {
-                frameEndpoint: '/botman',
-                chatServer: '/botman/chat', 
-                introMessage: 'Salut ! 👋 Je suis le chatbot de Tech Libre. Comment puis-je t\'aider ?',
-                title: 'Tech Libre Assistant',
-                placeholderText: 'Envoie-moi un message...',
-                mainColor: '#00cba9',
-                bubbleBackground: '#00cba9',
-                headerTextColor: '#fff',
-                // Taille maximale pour le widget
-                desktopHeight: 500,
-                desktopWidth: 400,
-                mobileHeight: '80vh',
-                mobileWidth: '90vw',
-                // Options supplémentaires
-                displayMessageTime: false,
-                // Important pour éviter les problèmes d'héritage de style
-                frameContainer: 'body', 
-                // Amélioration UX
-                autoOpen: false,
-                hideWhenNotConnected: false,
-                useLocalStorage: true
-            };
-                
-                // Stockage global des instances CKEditor
-                window.editorInstances = {};
-                
-                // Nettoyer les éditeurs avant le cache Turbo
-                document.addEventListener('turbo:before-cache', function() {
-                    console.log('Cleaning up CKEditor instances before cache');
-                    if (window.editorInstances) {
-                        Object.values(window.editorInstances).forEach(editor => {
-                            if (editor && typeof editor.destroy === 'function') {
-                                editor.destroy().catch(error => {
-                                    console.error('Error destroying CKEditor:', error);
-                                });
-                            }
-                        });
-                        window.editorInstances = {};
-                    }
-                });
-                
-                // Initialiser les éditeurs à chaque chargement de page
-                document.addEventListener('turbo:load', function() {
-                    console.log('Turbo load - Initializing CKEditor');
-                    if (typeof ClassicEditor !== 'undefined') {
-                        console.log('Looking for CKEditor elements');
-                        
-                        document.querySelectorAll('.ckeditor, #episode_description').forEach(element => {
-                            // Vérifier que l'élément n'est pas déjà un éditeur
-                            if (!element.closest('.ck-editor')) {
-                                console.log('Initializing CKEditor on element:', element.id || element.className);
-                                
-                                ClassicEditor
-                                    .create(element, {
-                                        toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
-                                        language: 'fr'
-                                    })
-                                    .then(editor => {
-                                        console.log('CKEditor initialized successfully');
-                                        // Stocker l'instance pour la nettoyer plus tard
-                                        const editorId = element.id || `editor-${Object.keys(window.editorInstances).length}`;
-                                        window.editorInstances[editorId] = editor;
-                                    })
-                                    .catch(error => {
-                                        console.error('CKEditor initialization error:', error);
-                                    });
-                            } else {
-                                console.log('Element already has CKEditor initialized');
-                            }
-                        });
-                    } else {
-                        console.error('CKEditor not loaded - script may be missing');
-                    }
-                });
-                
-                // Pour s'assurer que les événements s'enregistrent même en cas de visite directe
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Si pas de Turbo, initialiser CKEditor
-                    if (typeof Turbo === 'undefined') {
-                        console.log('Non-Turbo page load - Initializing CKEditor');
-                        if (typeof ClassicEditor !== 'undefined') {
-                            document.querySelectorAll('.ckeditor, #episode_description').forEach(element => {
-                                if (!element.closest('.ck-editor')) {
-                                    ClassicEditor.create(element, {
-                                        toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
-                                        language: 'fr'
-                                    });
-                                }
-                            });
-                        }
-                    }
-                });
-                
-                // Fonction utilitaire globale pour les notifications
-                window.showNotification = function(message, type = 'info') {
-                    if (typeof bootstrap === 'undefined') {
-                        console.error('Bootstrap is not loaded');
-                        alert(message);
-                        return;
-                    }
-                    
-                    // Créer un élément toast
-                    const toast = document.createElement('div');
-                    toast.className = `toast align-items-center text-white bg-${type} border-0`;
-                    toast.setAttribute('role', 'alert');
-                    toast.setAttribute('aria-live', 'assertive');
-                    toast.setAttribute('aria-atomic', 'true');
-                    
-                    toast.innerHTML = `
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                ${message}
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                    `;
-                    
-                    // Ajouter le toast au container
-                    let toastContainer = document.querySelector('.toast-container');
-                    if (!toastContainer) {
-                        toastContainer = document.createElement('div');
-                        toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-                        document.body.appendChild(toastContainer);
-                    }
-                    
-                    toastContainer.appendChild(toast);
-                    
-                    // Initialiser le toast Bootstrap
-                    const bsToast = new bootstrap.Toast(toast);
-                    bsToast.show();
-                    
-                    // Supprimer le toast après qu'il soit caché
-                    toast.addEventListener('hidden.bs.toast', function () {
-                        toast.remove();
-                    });
-                };
-            </script>
         {% endblock %}
     </head>
     <body class="d-flex flex-column min-vh-100">
@@ -196,5 +56,127 @@
         
         <!-- Container pour les toasts -->
         <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+        <!-- Scripts avec CKEditor et autres -->
+        <script>
+            // Stockage global des instances CKEditor
+            window.editorInstances = {};
+            
+            // Nettoyer les éditeurs avant le cache Turbo
+            document.addEventListener('turbo:before-cache', function() {
+                console.log('Cleaning up CKEditor instances before cache');
+                if (window.editorInstances) {
+                    Object.values(window.editorInstances).forEach(editor => {
+                        if (editor && typeof editor.destroy === 'function') {
+                            editor.destroy().catch(error => {
+                                console.error('Error destroying CKEditor:', error);
+                            });
+                        }
+                    });
+                    window.editorInstances = {};
+                }
+            });
+            
+            // Initialiser les éditeurs à chaque chargement de page
+            document.addEventListener('turbo:load', function() {
+                console.log('Turbo load - Initializing CKEditor');
+                if (typeof ClassicEditor !== 'undefined') {
+                    console.log('Looking for CKEditor elements');
+                    
+                    document.querySelectorAll('.ckeditor, #episode_description').forEach(element => {
+                        // Vérifier que l'élément n'est pas déjà un éditeur
+                        if (!element.closest('.ck-editor')) {
+                            console.log('Initializing CKEditor on element:', element.id || element.className);
+                            
+                            ClassicEditor
+                                .create(element, {
+                                    toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
+                                    language: 'fr'
+                                })
+                                .then(editor => {
+                                    console.log('CKEditor initialized successfully');
+                                    // Stocker l'instance pour la nettoyer plus tard
+                                    const editorId = element.id || `editor-${Object.keys(window.editorInstances).length}`;
+                                    window.editorInstances[editorId] = editor;
+                                })
+                                .catch(error => {
+                                    console.error('CKEditor initialization error:', error);
+                                });
+                        } else {
+                            console.log('Element already has CKEditor initialized');
+                        }
+                    });
+                } else {
+                    console.error('CKEditor not loaded - script may be missing');
+                }
+            });
+            
+            // Pour s'assurer que les événements s'enregistrent même en cas de visite directe
+            document.addEventListener('DOMContentLoaded', function() {
+                // Si pas de Turbo, initialiser CKEditor
+                if (typeof Turbo === 'undefined') {
+                    console.log('Non-Turbo page load - Initializing CKEditor');
+                    if (typeof ClassicEditor !== 'undefined') {
+                        document.querySelectorAll('.ckeditor, #episode_description').forEach(element => {
+                            if (!element.closest('.ck-editor')) {
+                                ClassicEditor.create(element, {
+                                    toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
+                                    language: 'fr'
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+            
+            // Fonction utilitaire globale pour les notifications
+            window.showNotification = function(message, type = 'info') {
+                if (typeof bootstrap === 'undefined') {
+                    console.error('Bootstrap is not loaded');
+                    alert(message);
+                    return;
+                }
+                
+                // Créer un élément toast
+                const toast = document.createElement('div');
+                toast.className = `toast align-items-center text-white bg-${type} border-0`;
+                toast.setAttribute('role', 'alert');
+                toast.setAttribute('aria-live', 'assertive');
+                toast.setAttribute('aria-atomic', 'true');
+                
+                toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+                
+                // Ajouter le toast au container
+                let toastContainer = document.querySelector('.toast-container');
+                if (!toastContainer) {
+                    toastContainer = document.createElement('div');
+                    toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                    document.body.appendChild(toastContainer);
+                }
+                
+                toastContainer.appendChild(toast);
+                
+                // Initialiser le toast Bootstrap
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+                
+                // Supprimer le toast après qu'il soit caché
+                toast.addEventListener('hidden.bs.toast', function () {
+                    toast.remove();
+                });
+            };
+        </script>
+        
+        <!-- Script pour désactiver Turbo sur les liens et initialiser BotMan -->
+        <script src="/js/botman-init.js"></script>
+        <!-- Le script BotMan doit être chargé après notre script de correction -->
+        <script src="https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js"></script>
     </body>
 </html>

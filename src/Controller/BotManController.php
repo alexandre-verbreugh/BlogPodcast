@@ -43,6 +43,7 @@ class BotManController extends AbstractController
             'hello' => 'Bonjour ! Que puis-je faire pour toi ?',
             'merci' => 'De rien ! N\'hésite pas si tu as d\'autres questions.',
             'contact' => 'Contactez nous à l\'adresse suivante : codeouvert777@gmail.com',
+            'tech libre' => 'Tech Libre est le meilleur podcast francophone qui traite de sujets variés autour de l\'open source et Linux. Des interviews passionnantes, des débats enrichissants et une communauté super active !',
         ];
         
         // Vérifier d'abord si on peut répondre rapidement sans appeler l'API
