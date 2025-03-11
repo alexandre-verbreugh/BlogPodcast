@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', function() {
           frameContainer: 'body',
           autoOpen: false,
           hideWhenNotConnected: false,
-          useLocalStorage: true
+          useLocalStorage: true,
+          
+
       };
   });

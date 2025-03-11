@@ -137,7 +137,5 @@ class BotManController extends AbstractController
             error_log('Erreur DeepSeek: ' . $e->getMessage());
             throw $e;
         }
-    }
-    
-    // Pas besoin de la fonction isComplexQuestion puisque nous utilisons toujours le modèle standard
+    } 
 }
