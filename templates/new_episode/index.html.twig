@@ -2,7 +2,6 @@
 
 {% block title %}{{ editMode is defined and editMode ? 'Modifier' : 'Créer' }} un Épisode{% endblock %}
 
-
 {% block body %}
     <div class="container mt-5">
         <h1>{{ editMode is defined and editMode ? 'Modifier' : 'Créer' }} un Épisode</h1>
@@ -17,7 +16,8 @@
         
         <div class="mb-3">
             {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'id': 'episode_description'}}) }}
+            {# Utiliser la classe ckeditor mais supprimer l'ID pour éviter l'initialisation double #}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control ckeditor'}}) }}
             {{ form_errors(form.description, {'attr': {'class': 'invalid-feedback'}}) }}
         </div>
         
@@ -45,7 +45,7 @@
             {{ form_errors(form.audioFile, {'attr': {'class': 'invalid-feedback'}}) }}
         </div>
 
-        {# 🔹 Affichage de l’image actuelle #}
+        {# 🔹 Affichage de l'image actuelle #}
         {% if editMode is defined and editMode and episode.coverImage %}
             <div class="mb-3">
                 <label class="form-label">Image actuelle :</label>
@@ -76,26 +76,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const editorElement = document.querySelector('#episode_description');
-            if (editorElement) {
-                console.log('Initializing CKEditor on:', editorElement);
-                ClassicEditor
-                    .create(editorElement, {
-                        toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
-                        language: 'fr'
-                    })
-                    .then(editor => {
-                        console.log('CKEditor initialized successfully');
-                    })
-                    .catch(error => {
-                        console.error('CKEditor initialization error:', error);
-                    });
-            } else {
-                console.error('Element #episode_description not found');
-            }
-        });
-    </script>
+
 {% endblock %}
