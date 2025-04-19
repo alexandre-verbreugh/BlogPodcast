@@ -1,58 +1,79 @@
 # BlogPodcast
 
-BlogPodcast est une application web développée avec Symfony pour gérer des articles de blog et des podcasts.
+BlogPodcast est une plateforme web moderne développée avec Symfony permettant de gérer et publier des articles de blog ainsi que des podcasts. Cette application tout-en-un offre une interface intuitive pour la gestion de contenu multimédia.
 
-## Prérequis
+## Fonctionnalités
 
-Avant de commencer, assure-toi d'avoir installé les éléments suivants :
+- Gestion des articles de blog
+- Publication de podcasts
+- Interface d'administration
+- Système de commentaires
+- Gestion des utilisateurs
+
+## Prérequis techniques
 
 - PHP 8.1 ou supérieur
 - Composer
 - Symfony CLI
 - MySQL/MariaDB
+- Serveur web (Apache/Nginx)
 
 ## Installation
 
-## Windows
+### 1. Récupération du projet
 
 ```bash
-# Cloner le projet
 git clone https://github.com/alexandre-verbreugh/BlogPodcast.git
+```
+
+```bash
 cd BlogPodcast
+```
 
-# Installer les dépendances
+### 2. Installation des dépendances
+
+```bash
 composer install
+```
 
-# Configurer la base de données dans le fichier .env
-DATABASE_URL="mysql://user\:password@127.0.0.1:3306/blogpodcast?serverVersion=8.0"
+### 3. Configuration
 
-# Créer la base de données
-php bin/console doctrine\:database\:create
+Créez une copie du fichier `.env` et nommez-la `.env.local`. Configurez vos variables d'environnement, notamment la connexion à la base de données :
 
-# Exécuter les migrations
-php bin/console doctrine\:migrations\:migrate
+```bash
+cp .env .env.local
+```
 
-# Lancer le serveur Symfony
-symfony server\:start
+Modifiez la ligne suivante dans `.env.local` avec vos informations :
+```
+DATABASE_URL="mysql://votre_utilisateur:votre_mot_de_passe@127.0.0.1:3306/blogpodcast?serverVersion=8.0"
+```
 
+### 4. Base de données
 
-## Linux
-
-# Cloner le projet
-git clone https://github.com/alexandre-verbreugh/BlogPodcast.git
-cd BlogPodcast
-
-# Installer les dépendances
-composer install
-
-# Configurer la base de données dans le fichier .env
-DATABASE_URL="mysql://user:password@127.0.0.1:3306/blogpodcast?serverVersion=8.0"
-
-# Créer la base de données
+```bash
 php bin/console doctrine:database:create
+```
 
-# Exécuter les migrations
+```bash
 php bin/console doctrine:migrations:migrate
+```
 
-# Lancer le serveur Symfony
+### 5. Démarrage du serveur
+
+```bash
 symfony server:start
+```
+
+## Accès à l'application
+
+Une fois l'installation terminée, l'application est accessible à l'adresse :
+- http://localhost:8000
+
+## Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à soumettre vos pull requests.
+
+## Licence
+
+Ce projet est sous licence MIT.
